@@ -1,4 +1,6 @@
 const mongoose = require("mongoose")
+const Comment = require("./CommentModel")
+const User = require("./UserModel")
 
 const PostSchema = new mongoose.Schema(
     {
@@ -81,6 +83,11 @@ const PostSchema = new mongoose.Schema(
             type: Number,
             default: 0
         },
+
+        comments: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comment"
+        }],
 
         // ---------- Moderation ----------
         isActive: {
