@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Post from './Post';
+import CreatePostModal from './CreatePostModal';
 import './PostFeed.css';
 
 interface PostData {
@@ -21,6 +22,7 @@ const PostFeed: React.FC = () => {
   const [posts, setPosts] = useState<PostData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Mock data for demonstration - replace with actual API call
   useEffect(() => {
@@ -106,18 +108,53 @@ const PostFeed: React.FC = () => {
 
   if (posts.length === 0) {
     return (
-      <div className="post-feed-empty">
-        <p>No posts available. Be the first to create one!</p>
-      </div>
+      <>
+        <div className="post-feed">
+          <div className="post-feed-header">
+            <h2>Opportunities</h2>
+            <button className="create-post-btn" onClick={() => setIsModalOpen(true)}>
+              <span className="btn-icon">+</span>
+              Create Post
+            </button>
+          </div>
+          <div className="post-feed-empty">
+            <p>No posts available. Be the first to create one!</p>
+          </div>
+        </div>
+        <CreatePostModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={handleCreateSuccess}
+        />
+      </>
     );
   }
 
+  const handleCreateSuccess = () => {
+    // Refresh posts after successful creation
+    window.location.reload(); // Simple reload for now, can be optimized later
+  };
+
   return (
-    <div className="post-feed">
-      {posts.map((post) => (
-        <Post key={post._id} post={post} />
-      ))}
-    </div>
+    <>
+      <div className="post-feed">
+        <div className="post-feed-header">
+          <h2>Opportunities</h2>
+          <button className="create-post-btn" onClick={() => setIsModalOpen(true)}>
+            <span className="btn-icon">+</span>
+            Create Post
+          </button>
+        </div>
+        {posts.map((post) => (
+          <Post key={post._id} post={post} />
+        ))}
+      </div>
+      <CreatePostModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={handleCreateSuccess}
+      />
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 // API configuration and utility functions
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = 'http://localhost:3002/api';
 
 // Get auth token from localStorage
 const getAuthToken = (): string | null => {
@@ -93,8 +93,32 @@ export const authAPI = {
   },
 };
 
-// Post API functions (for future use)
+// Post API functions
 export const postAPI = {
+  createPost: async (postData: {
+    title: string;
+    description: string;
+    category?: string;
+    lookingFor?: {
+      roles?: string[];
+      skills?: string[];
+      count?: number;
+    };
+    city?: string;
+    isRemote?: boolean;
+    commitment?: string;
+    investmentRequired?: {
+      min?: number;
+      max?: number;
+    };
+  }) => {
+    const response = await apiRequest('/posts/create_post', {
+      method: 'POST',
+      body: JSON.stringify(postData),
+    });
+    return response.json();
+  },
+
   getPosts: async () => {
     const response = await apiRequest('/posts/get_my_posts', {
       method: 'GET',

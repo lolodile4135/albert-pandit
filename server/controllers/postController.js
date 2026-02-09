@@ -10,21 +10,59 @@ const createPost = async (req, res) => {
         if (!user) {
             return res.status(404).json({ success: false, message: "user not found" })
         }
-        const { title, description } = req.body;
-        const newPost = await Post.create({
+        
+        const {
+            title,
+            description,
+            category,
+            lookingFor,
+            city,
+            isRemote,
+            commitment,
+            investmentRequired
+        } = req.body;
+
+        // Validate required fields
+        if (!title || !description) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Title and description are required" 
+            });
+        }
+
+        // Build post data
+        const postData = {
             owner: userId,
             title,
             description
-        })
+        };
+
+        // Add optional fields if provided
+        if (category) postData.category = category;
+        if (lookingFor) postData.lookingFor = lookingFor;
+        if (city) postData.city = city;
+        if (isRemote !== undefined) postData.isRemote = isRemote;
+        if (commitment) postData.commitment = commitment;
+        if (investmentRequired) postData.investmentRequired = investmentRequired;
+
+        const newPost = await Post.create(postData);
+        
+        // Populate owner details for response
+        await newPost.populate('owner', 'name email profileImage role');
+        
         return res.status(200).json({
             success: true,
             message: 'Post created successfully',
             post: newPost
-
         });
 
     } catch (error) {
-        res.status(500).json({ message: 'Server error, Post could not be created' });
+        console.error('CREATE POST ERROR:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error, Post could not be created',
+            error: error.message 
+        });
     }
 }
 

@@ -4,6 +4,49 @@
   padding: 24px 16px;
 }
 
+.post-feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-light-gray);
+}
+
+.post-feed-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-dark-gray);
+}
+
+.create-post-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: var(--color-orange-peach);
+  color: var(--color-white);
+  border: none;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.create-post-btn:hover {
+  background-color: var(--color-orange-peach-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 140, 105, 0.3);
+}
+
+.btn-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
 .post-feed-loading,
 .post-feed-error,
 .post-feed-empty {
