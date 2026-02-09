@@ -82,12 +82,29 @@ h1 {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: var(--color-light-gray);
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-layout {
+  display: flex;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 24px;
+  padding: 24px 16px;
+  align-items: flex-start;
 }
 
 .app-main {
   flex: 1;
   background-color: var(--color-light-gray);
   padding-top: 0;
+  min-width: 0;
 }
 
 .loading-container {
