@@ -1,0 +1,144 @@
+.post-card {
+  background-color: #ffffff;
+  border: 1px solid #808080;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.post-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.post-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.post-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #FF8C69 0%, #FFA07A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.post-header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-author-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 2px;
+}
+
+.post-author-role {
+  font-size: 12px;
+  color: #808080;
+  margin-bottom: 4px;
+}
+
+.post-meta {
+  font-size: 12px;
+  color: #808080;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.post-time,
+.post-location {
+  color: #808080;
+}
+
+.post-content {
+  margin-bottom: 16px;
+}
+
+.post-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background-color: #F5F5F5;
+  color: #333333;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.post-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.post-description {
+  font-size: 14px;
+  color: #333333;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.post-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #F5F5F5;
+}
+
+.post-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 24px;
+  background-color: transparent;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+.post-action-btn:hover {
+  background-color: #F5F5F5;
+  color: #333333;
+}
+
+.action-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+

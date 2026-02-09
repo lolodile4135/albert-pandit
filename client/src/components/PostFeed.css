@@ -1,0 +1,56 @@
+.post-feed {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.post-feed-loading,
+.post-feed-error,
+.post-feed-empty {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #F5F5F5;
+  border-top-color: #FF8C69;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.post-feed-loading p,
+.post-feed-error p,
+.post-feed-empty p {
+  color: #808080;
+  font-size: 14px;
+  margin: 0;
+}
+
+.post-feed-error button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: #FF8C69;
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.post-feed-error button:hover {
+  background-color: #FF7A50;
+}
+
