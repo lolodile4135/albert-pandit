@@ -26,11 +26,13 @@ const create_comment = async (req, res) => {
             { new: true }
         );
 
+        // Populate user details before returning
+        await new_comment.populate('user', 'name email profileImage role');
+
         return res.status(200).json({
             success: true,
             message: 'comment created successfully',
             comment: new_comment
-
         });
 
     } catch (error) {
@@ -103,4 +105,38 @@ const delete_comment = async (req, res) => {
   };
   
 
-module.exports = { create_comment, edit_comment, delete_comment };
+const get_comments = async (req, res) => {
+    try {
+        const post_id = req.params.post_id;
+        const post = await Post.findById(post_id);
+        
+        if (!post) {
+            return res.status(404).json({ 
+                success: false,
+                message: "Post not found" 
+            });
+        }
+
+        // Get all comments for this post, populate user details
+        const comments = await Comment.find({ post: post_id })
+            .populate('user', 'name email profileImage role')
+            .sort({ createdAt: -1 }); // Newest first
+
+        return res.status(200).json({
+            success: true,
+            message: 'Comments fetched successfully',
+            comments: comments,
+            count: comments.length
+        });
+
+    } catch (error) {
+        console.error('GET COMMENTS ERROR:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error, comments could not be fetched',
+            error: error.message 
+        });
+    }
+}
+
+module.exports = { create_comment, edit_comment, delete_comment, get_comments };

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import InterestButton from './InterestButton';
+import CommentsSection from './CommentsSection';
 import './Post.css';
 
 interface PostProps {
@@ -16,21 +17,41 @@ interface PostProps {
     createdAt?: string;
     category?: string;
     city?: string;
+    relevanceScore?: number;
+    scoreBreakdown?: {
+      cityMatch: number;
+      skillsOverlap: number;
+      availability: number;
+      investmentFit: number;
+      profileCompleteness: number;
+    };
   };
 }
 
 const Post: React.FC<PostProps> = ({ post }) => {
+  const [showComments, setShowComments] = useState(false);
+
+  // Safety check
+  if (!post || !post._id) {
+    return null;
+  }
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Recently';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Recently';
+      const now = new Date();
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    return date.toLocaleDateString();
+      if (diffInSeconds < 60) return 'Just now';
+      if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+      if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+      if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Recently';
+    }
   };
 
   return (
@@ -58,19 +79,32 @@ const Post: React.FC<PostProps> = ({ post }) => {
       </div>
 
       <div className="post-content">
-        {post.category && (
-          <div className="post-category">{post.category}</div>
-        )}
-        <h3 className="post-title">{post.title}</h3>
-        <p className="post-description">{post.description}</p>
+        <div className="post-header-meta">
+          {post.category && (
+            <div className="post-category">{post.category}</div>
+          )}
+          {post.relevanceScore !== undefined && post.relevanceScore !== null && !isNaN(post.relevanceScore) && (
+            <div className="relevance-badge" title={`Relevance Score: ${Number(post.relevanceScore).toFixed(1)}/100`}>
+              <span className="relevance-icon">⭐</span>
+              <span className="relevance-score">{Number(post.relevanceScore).toFixed(0)}% Match</span>
+            </div>
+          )}
+        </div>
+        <h3 className="post-title">{post.title || 'Untitled Post'}</h3>
+        <p className="post-description">{post.description || 'No description available'}</p>
       </div>
 
       <div className="post-actions">
-        <InterestButton
-          postId={post._id}
-          initialCount={post.interestsCount || 0}
-        />
-        <button className="post-action-btn">
+        {post._id && (
+          <InterestButton
+            postId={post._id}
+            initialCount={post.interestsCount || 0}
+          />
+        )}
+        <button 
+          className={`post-action-btn ${showComments ? 'active' : ''}`}
+          onClick={() => setShowComments(!showComments)}
+        >
           <span className="action-icon">💬</span>
           <span>Comment</span>
         </button>
@@ -79,6 +113,11 @@ const Post: React.FC<PostProps> = ({ post }) => {
           <span>Share</span>
         </button>
       </div>
+
+      {/* Comments Section */}
+      {showComments && post._id && (
+        <CommentsSection postId={post._id} />
+      )}
     </div>
   );
 };

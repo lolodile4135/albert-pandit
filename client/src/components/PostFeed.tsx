@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Post from './Post';
 import CreatePostModal from './CreatePostModal';
+import { postAPI } from '../utils/api';
 import './PostFeed.css';
 
 interface PostData {
@@ -16,6 +17,14 @@ interface PostData {
   createdAt?: string;
   category?: string;
   city?: string;
+  relevanceScore?: number;
+  scoreBreakdown?: {
+    cityMatch: number;
+    skillsOverlap: number;
+    availability: number;
+    investmentFit: number;
+    profileCompleteness: number;
+  };
 }
 
 const PostFeed: React.FC = () => {
@@ -24,61 +33,19 @@ const PostFeed: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Mock data for demonstration - replace with actual API call
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        // TODO: Replace with actual API call
-        // const response = await postAPI.getPosts();
-        // setPosts(response.my_posts || []);
-
-        // Mock data for now
-        const mockPosts: PostData[] = [
-          {
-            _id: '1',
-            title: 'Looking for a Co-Founder for Food Delivery Startup',
-            description: 'I have an innovative idea for a food delivery platform focusing on local restaurants. Looking for someone with marketing and operations experience.',
-            owner: {
-              name: 'John Doe',
-              role: 'Idea Owner',
-            },
-            interestsCount: 5,
-            createdAt: new Date(Date.now() - 3600000).toISOString(),
-            category: 'FOOD',
-            city: 'Mumbai',
-          },
-          {
-            _id: '2',
-            title: 'Tech Startup Seeking Technical Co-Founder',
-            description: 'We are building a SaaS platform for small businesses. Need a full-stack developer with React and Node.js experience. Equity-based partnership.',
-            owner: {
-              name: 'Jane Smith',
-              role: 'Business Developer',
-            },
-            interestsCount: 12,
-            createdAt: new Date(Date.now() - 7200000).toISOString(),
-            category: 'TECH',
-            city: 'Bangalore',
-          },
-          {
-            _id: '3',
-            title: 'Retail Business Partnership Opportunity',
-            description: 'Established retail business looking for an investor or partner to expand operations. Great location, proven track record.',
-            owner: {
-              name: 'Mike Johnson',
-              role: 'Business Owner',
-            },
-            interestsCount: 3,
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-            category: 'RETAIL',
-            city: 'Delhi',
-          },
-        ];
-
-        setPosts(mockPosts);
-        setError(null);
+        const response = await postAPI.getRelevantPosts();
+        
+        if (response.success) {
+          setPosts(response.posts || []);
+        } else {
+          setError(response.message || 'Failed to load posts');
+        }
       } catch (err: any) {
+        console.error('Error fetching posts:', err);
         setError(err.message || 'Failed to load posts');
       } finally {
         setLoading(false);
@@ -106,6 +73,11 @@ const PostFeed: React.FC = () => {
     );
   }
 
+  const handleCreateSuccess = () => {
+    // Refresh posts after successful creation
+    window.location.reload(); // Simple reload for now, can be optimized later
+  };
+
   if (posts.length === 0) {
     return (
       <>
@@ -129,11 +101,6 @@ const PostFeed: React.FC = () => {
       </>
     );
   }
-
-  const handleCreateSuccess = () => {
-    // Refresh posts after successful creation
-    window.location.reload(); // Simple reload for now, can be optimized later
-  };
 
   return (
     <>

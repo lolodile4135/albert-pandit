@@ -125,5 +125,37 @@ export const postAPI = {
     });
     return response.json();
   },
+
+  getRelevantPosts: async () => {
+    const response = await apiRequest('/posts/get_relevant_posts', {
+      method: 'GET',
+    });
+    return response.json();
+  },
+};
+
+// Comment API functions
+export const commentAPI = {
+  getComments: async (postId: string) => {
+    const response = await apiRequest(`/comments/get_comments/${postId}`, {
+      method: 'GET',
+    });
+    return response.json();
+  },
+
+  createComment: async (postId: string, text: string) => {
+    const response = await apiRequest(`/comments/create_comment/${postId}`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+    return response.json();
+  },
+
+  deleteComment: async (commentId: string) => {
+    const response = await apiRequest(`/comments/delete_comment/${commentId}`, {
+      method: 'DELETE',
+    });
+    return response.json();
+  },
 };
 
