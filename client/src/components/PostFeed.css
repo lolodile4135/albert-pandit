@@ -15,7 +15,7 @@
 
 .post-feed-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--color-dark-gray);
 }
@@ -23,13 +23,13 @@
 .create-post-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
+  gap: 6px;
+  padding: 8px 16px;
   background-color: var(--color-orange-peach);
   color: var(--color-white);
   border: none;
-  border-radius: 24px;
-  font-size: 14px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -43,7 +43,7 @@
 }
 
 .btn-icon {
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1;
 }
 

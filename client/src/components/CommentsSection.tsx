@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { commentAPI } from '../utils/api';
 import './CommentsSection.css';
@@ -27,12 +27,35 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   const [commentText, setCommentText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editText, setEditText] = useState('');
+  const menuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const INITIAL_COMMENTS_COUNT = 2;
 
   useEffect(() => {
     fetchComments();
   }, [postId]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (openMenuId && menuRefs.current[openMenuId]) {
+        if (!menuRefs.current[openMenuId]?.contains(event.target as Node)) {
+          setOpenMenuId(null);
+        }
+      }
+    };
+
+    if (openMenuId) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openMenuId]);
 
   const fetchComments = async () => {
     try {
@@ -83,6 +106,7 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
   };
 
   const handleDeleteComment = async (commentId: string) => {
+    setOpenMenuId(null);
     if (!window.confirm('Are you sure you want to delete this comment?')) {
       return;
     }
@@ -97,6 +121,42 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
       }
     } catch (err: any) {
       alert(err.message || 'Failed to delete comment');
+    }
+  };
+
+  const handleEditComment = (comment: Comment) => {
+    setOpenMenuId(null);
+    setEditingCommentId(comment._id);
+    setEditText(comment.text);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditText('');
+  };
+
+  const handleSaveEdit = async (commentId: string) => {
+    if (!editText.trim()) {
+      setError('Comment cannot be empty');
+      return;
+    }
+
+    try {
+      const response = await commentAPI.editComment(commentId, editText.trim());
+      if (response.success) {
+        // Update comment in local state
+        setComments(comments.map(c => 
+          c._id === commentId 
+            ? { ...c, text: editText.trim() }
+            : c
+        ));
+        setEditingCommentId(null);
+        setEditText('');
+      } else {
+        setError(response.message || 'Failed to update comment');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to update comment');
     }
   };
 
@@ -160,6 +220,8 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
           <div className="comments-list">
             {displayedComments.map((comment) => {
               const isOwnComment = user && comment.user._id === user.id;
+              const isEditing = editingCommentId === comment._id;
+              
               return (
                 <div key={comment._id} className="comment-item">
                   <div className="comment-avatar">
@@ -173,21 +235,77 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ postId }) => {
                   </div>
                   <div className="comment-content">
                     <div className="comment-header">
-                      <span className="comment-author">{comment.user.name}</span>
-                      {comment.user.role && (
-                        <span className="comment-author-role"> · {comment.user.role}</span>
+                      <div className="comment-header-left">
+                        <span className="comment-author">{comment.user.name}</span>
+                        {comment.user.role && (
+                          <span className="comment-author-role"> · {comment.user.role}</span>
+                        )}
+                        <span className="comment-time">{formatDate(comment.createdAt)}</span>
+                      </div>
+                      {isOwnComment && !isEditing && (
+                        <div 
+                          className="comment-menu-container"
+                          ref={(el) => (menuRefs.current[comment._id] = el)}
+                        >
+                          <button
+                            className="comment-menu-btn"
+                            onClick={() => setOpenMenuId(openMenuId === comment._id ? null : comment._id)}
+                            title="More options"
+                          >
+                            <span className="comment-menu-icon">⋯</span>
+                          </button>
+                          {openMenuId === comment._id && (
+                            <div className="comment-menu-dropdown">
+                              <button
+                                className="comment-menu-item"
+                                onClick={() => handleEditComment(comment)}
+                              >
+                                <span className="menu-item-icon">✏️</span>
+                                Edit
+                              </button>
+                              <button
+                                className="comment-menu-item delete"
+                                onClick={() => handleDeleteComment(comment._id)}
+                              >
+                                <span className="menu-item-icon">🗑️</span>
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       )}
-                      <span className="comment-time">{formatDate(comment.createdAt)}</span>
                     </div>
-                    <p className="comment-text">{comment.text}</p>
-                    {isOwnComment && (
-                      <button
-                        className="comment-delete-btn"
-                        onClick={() => handleDeleteComment(comment._id)}
-                        title="Delete your comment"
-                      >
-                        Delete
-                      </button>
+                    {isEditing ? (
+                      <div className="comment-edit-form">
+                        <textarea
+                          className="comment-edit-input"
+                          value={editText}
+                          onChange={(e) => {
+                            setEditText(e.target.value);
+                            setError(null);
+                          }}
+                          rows={3}
+                          maxLength={500}
+                          autoFocus
+                        />
+                        <div className="comment-edit-actions">
+                          <button
+                            className="comment-edit-cancel"
+                            onClick={handleCancelEdit}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="comment-edit-save"
+                            onClick={() => handleSaveEdit(comment._id)}
+                            disabled={!editText.trim()}
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="comment-text">{comment.text}</p>
                     )}
                   </div>
                 </div>

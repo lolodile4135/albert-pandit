@@ -157,5 +157,13 @@ export const commentAPI = {
     });
     return response.json();
   },
+
+  editComment: async (commentId: string, text: string) => {
+    const response = await apiRequest(`/comments/edit_comment/${commentId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ text }),
+    });
+    return response.json();
+  },
 };
 

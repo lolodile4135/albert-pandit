@@ -105,6 +105,8 @@ h1 {
   background-color: var(--color-light-gray);
   padding-top: 0;
   min-width: 0;
+  display: flex;
+  justify-content: center;
 }
 
 .loading-container {

@@ -41,7 +41,7 @@
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -51,20 +51,20 @@
 }
 
 .post-author-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #333333;
   margin-bottom: 2px;
 }
 
 .post-author-role {
-  font-size: 12px;
+  font-size: 11px;
   color: #808080;
   margin-bottom: 4px;
 }
 
 .post-meta {
-  font-size: 12px;
+  font-size: 11px;
   color: #808080;
   display: flex;
   align-items: center;
@@ -120,7 +120,7 @@
 }
 
 .post-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #333333;
   margin: 0 0 8px 0;
@@ -128,7 +128,7 @@
 }
 
 .post-description {
-  font-size: 14px;
+  font-size: 13px;
   color: #333333;
   line-height: 1.6;
   margin: 0;
@@ -153,7 +153,7 @@
   border-radius: 24px;
   background-color: transparent;
   color: #333333;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
